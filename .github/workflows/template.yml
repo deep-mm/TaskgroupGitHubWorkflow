@@ -1,0 +1,64 @@
+#Name of the workflow
+name: Template-Example
+
+#Triggers to run the workflow
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to run'
+        required: true
+        default: 'dev'
+
+jobs:
+  #Release Job
+  release:
+    name: Release to ${{ github.event.inputs.environment }} # Name of the job
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+    outputs: # Outputs expected from release job to be used in other jobs
+      pipeline_env: ${{ steps.assignenv.outputs.env }}
+    environment: # Environment to which the application will be deployed.
+      name: ${{ github.event.inputs.environment }}
+    steps:
+    - name: Checkout Repository #Checkout the Repository into the agent
+      uses: actions/checkout@v2
+
+    # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
+    - name: Set Environment Variables - ${{ env.pipeline_env }} # Set Variables based on environment
+      uses: deep-mm/set-variables@v1.0
+      with:
+        variableFileName: 'variables-${{ env.pipeline_env }}'
+        
+    - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Create Resource Group # Create Resource Group using azure cli commands
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az group create --name "Test-${{ env.resourcegroup }}" --location "eastus"
+          
+  Release_To_Next_Env:
+    needs: [release]
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+    if: ${{ github.event.inputs.environment }} != 'prd'
+    steps:
+    - name: Configure parameters for Workflow Dispatch # Based on the current environment, this action evaluates the next environment to run the CD pipeline
+      shell: bash
+      run: |
+        if [ ${{ github.event.inputs.environment }} = 'dev' ]; then
+          echo "trigger=qa" >> $GITHUB_ENV
+        fi
+        if [ ${{ github.event.inputs.environment }} = 'qa' ]; then
+          echo "trigger=prd" >> $GITHUB_ENV
+        fi
+
+    # This action is responsible to re-running the same CD pipeline using workflow dispatch in the next environment
+    - name: Trigger - Release to ${{ env.trigger }}
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: Template-Example
+        token: ${{ github.token }}
+        inputs: '{ "environment": "${{ env.trigger }}" }'
