@@ -22,10 +22,10 @@ jobs:
       uses: actions/checkout@v2
 
     # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
-    - name: Set Environment Variables - ${{ env.pipeline_env }} # Set Variables based on environment
+    - name: Set Environment Variables - ${{ github.event.inputs.environment }} # Set Variables based on environment
       uses: deep-mm/set-variables@v1.0
       with:
-        variableFileName: 'variable-${{ env.pipeline_env }}'
+        variableFileName: 'variable-${{ github.event.inputs.environment }}'
         
     - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
       uses: azure/login@v1
