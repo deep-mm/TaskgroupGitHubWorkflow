@@ -58,5 +58,5 @@ jobs:
       uses: benc-uk/workflow-dispatch@v1
       with:
         workflow: Template-Example
-        token: ${{ github.token }}
+        token: ${{ secrets.PAT }}
         inputs: '{ "environment": "${{ env.trigger }}" }'
