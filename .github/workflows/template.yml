@@ -15,8 +15,6 @@ jobs:
   release:
     name: Release to ${{ github.event.inputs.environment }} # Name of the job
     runs-on: ubuntu-latest # The type of runner that the job will run on
-    outputs: # Outputs expected from release job to be used in other jobs
-      pipeline_env: ${{ steps.assignenv.outputs.env }}
     environment: # Environment to which the application will be deployed.
       name: ${{ github.event.inputs.environment }}
     steps:
@@ -27,7 +25,7 @@ jobs:
     - name: Set Environment Variables - ${{ env.pipeline_env }} # Set Variables based on environment
       uses: deep-mm/set-variables@v1.0
       with:
-        variableFileName: 'variables-${{ env.pipeline_env }}'
+        variableFileName: 'variable-${{ env.pipeline_env }}'
         
     - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
       uses: azure/login@v1
@@ -38,7 +36,7 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          az group create --name "Test-${{ env.resourcegroup }}" --location "eastus"
+          az group create --name "${{ env.resourceGroupName }}" --location "eastus"
           
   Release_To_Next_Env:
     needs: [release]
