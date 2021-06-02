@@ -2,7 +2,7 @@
     "variables": [
       {
         "name": "resourceGroupName",
-        "value": "test-dev"
+        "value": "test-prd"
       }
     ]
 }
