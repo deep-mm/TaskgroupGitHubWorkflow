@@ -41,7 +41,7 @@ jobs:
   Release_To_Next_Env:
     needs: [release]
     runs-on: ubuntu-latest # The type of runner that the job will run on
-    if: ${{ github.event.inputs.environment }} != 'prd'
+    if: github.event.inputs.environment != 'prd'
     steps:
     - name: Configure parameters for Workflow Dispatch # Based on the current environment, this action evaluates the next environment to run the CD pipeline
       shell: bash
