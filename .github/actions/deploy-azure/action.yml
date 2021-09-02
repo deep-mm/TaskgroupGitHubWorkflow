@@ -20,11 +20,6 @@ runs:
       with:
         variableFileName: 'variable-${{ inputs.environment }}'
         
-    - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-        
     - name: Create Resource Group # Create Resource Group using azure cli commands
       uses: azure/CLI@v1
       with:
