@@ -20,6 +20,9 @@ This action has 3 composite steps:
 
 Then this composite action is utilized in our main workflow [Template-Action-Composite](https://github.com/deep-mm/TaskgroupGitHubWorkflow/blob/main/.github/workflows/template-new.yml), in all three jobs release_dev, release_qa & release_prd. The only change being in the input provided to the composite action.
 
+The output here looks something like this:
+![image](https://user-images.githubusercontent.com/29853549/131791434-873d9fb9-c8fd-44ed-977c-a8bed732e032.png)
+
 ## Running single workflow in different environments
 
 ![Template Workflow Diagram](https://user-images.githubusercontent.com/29853549/120455739-a54fd680-c3b2-11eb-8875-5de1fb34c20c.png)
