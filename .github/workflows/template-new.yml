@@ -1,0 +1,55 @@
+#Name of the workflow
+name: Template-Action-Composite
+
+#Triggers to run the workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  #Release Job
+  release_dev:
+    name: Release to DEV # Name of the job
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+    environment: # Environment to which the application will be deployed.
+      name: dev
+    steps:
+    - name: Checkout Repository #Checkout the Repository into the agent
+      uses: actions/checkout@v2
+
+    # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
+    - name: Deploy to Azure - Dev # Set Variables based on environment
+      uses: ./.github/actions/deploy-azure
+      with:
+        environment: 'dev'
+
+  release_qa:
+    name: Release to QA # Name of the job
+    needs: [release_dev]
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+    environment: # Environment to which the application will be deployed.
+      name: qa
+    steps:
+    - name: Checkout Repository #Checkout the Repository into the agent
+      uses: actions/checkout@v2
+
+    # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
+    - name: Deploy to Azure - QA # Set Variables based on environment
+      uses: ./.github/actions/deploy-azure
+      with:
+        environment: 'qa'
+
+  release_prd:
+    name: Release to PRD # Name of the job
+    needs: [release_qa]
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+    environment: # Environment to which the application will be deployed.
+      name: qa
+    steps:
+    - name: Checkout Repository #Checkout the Repository into the agent
+      uses: actions/checkout@v2
+
+    # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
+    - name: Deploy to Azure - PRD # Set Variables based on environment
+      uses: ./.github/actions/deploy-azure
+      with:
+        environment: 'prd'

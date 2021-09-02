@@ -1,0 +1,32 @@
+name: 'Deploy to Azure'
+description: 'Deploy resources to azure environment'
+inputs:
+  environment:
+    description: 'Environment to deploy resources to'
+    required: true
+    default: 'dev'
+outputs:
+  status: 
+    description: "Status"
+    value: "Pass"
+runs:
+  using: "composite"
+  steps:
+    - run: echo Deploying Azure Resources to following environment ${{ inputs.environment }}
+      shell: bash
+
+    - name: Set Environment Variables - ${{ inputs.environment }} # Set Variables based on environment
+      uses: deep-mm/set-variables@v1.0
+      with:
+        variableFileName: 'variable-${{ inputs.environment }}'
+        
+    - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Create Resource Group # Create Resource Group using azure cli commands
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          az group create --name "${{ env.resourceGroupName }}" --location "eastus"
