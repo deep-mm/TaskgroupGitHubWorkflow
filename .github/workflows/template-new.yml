@@ -53,7 +53,7 @@ jobs:
     needs: [release_qa]
     runs-on: ubuntu-latest # The type of runner that the job will run on
     environment: # Environment to which the application will be deployed.
-      name: qa
+      name: prd
     steps:
     - name: Checkout Repository #Checkout the Repository into the agent
       uses: actions/checkout@v2
