@@ -8,7 +8,7 @@ If you are someone coming from Azure DevOps world to GitHub DevOps tools, 2 majo
 
 ## 1. GitHub Composite Action
 
-GitHub Composite action allows one to create a template file containing composite actions. This template file in GitHub is known as a composite action. A composite action takes an input of a variable, and then we can utilize these variables to run same set of actions but in different environments.
+[GitHub Composite action](https://github.blog/changelog/2021-08-25-github-actions-reduce-duplication-with-action-composition/) allows one to create a template file containing composite actions. This template file in GitHub is known as a composite action. A composite action takes an input of a variable, and then we can utilize these variables to run same set of actions but in different environments.
 For our example, we have created a composite action called [deploy-azure](https://github.com/deep-mm/TaskgroupGitHubWorkflow/blob/main/.github/actions/deploy-azure/action.yml).
 
 This action takes an input of variable environment, which is then utilized in subsequent steps.
