@@ -15,10 +15,10 @@ on:
 jobs:
   #Release Job
   release:
-    name: Release to ${{ inputs.environment }} # Name of the job
+    name: Release to ${{ inputs.env }} # Name of the job
     runs-on: ubuntu-latest # The type of runner that the job will run on
     environment: # Environment to which the application will be deployed.
-      name: ${{ inputs.environment }}
+      name: ${{ inputs.env }}
     steps:
       - name: Checkout Repository #Checkout the Repository into the agent
         uses: actions/checkout@v2
@@ -29,7 +29,7 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
-      - name: Deploy to Azure - ${{ inputs.environment }} # Set Variables based on environment
+      - name: Deploy to Azure - ${{ inputs.env }} # Set Variables based on environment
         uses: ./.github/actions/deploy-azure
         with:
-          environment: ${{ inputs.environment }}
+          environment: ${{ inputs.env }}
