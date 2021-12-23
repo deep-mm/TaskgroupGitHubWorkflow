@@ -23,7 +23,7 @@ jobs:
       AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
   release-prd:
-    needs: [release-prd]
+    needs: [release-qa]
     uses: deep-mm/TaskgroupGitHubWorkflow/.github/workflows/reusable-template.yml@main
     with:
       env: 'prd'
