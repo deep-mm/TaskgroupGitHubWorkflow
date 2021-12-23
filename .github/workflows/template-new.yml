@@ -7,64 +7,25 @@ on:
 
 jobs:
   #Release Job
-  release_dev:
-    name: Release to DEV # Name of the job
-    runs-on: ubuntu-latest # The type of runner that the job will run on
-    environment: # Environment to which the application will be deployed.
-      name: dev
-    steps:
-    - name: Checkout Repository #Checkout the Repository into the agent
-      uses: actions/checkout@v2
+  release-dev:
+    uses: deep-mm/TaskgroupGitHubWorkflow/.github/workflows/reusable-template.yml@main
+    with:
+      env: 'dev'
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
+  release-qa:
+    needs: [release-dev]
+    uses: deep-mm/TaskgroupGitHubWorkflow/.github/workflows/reusable-template.yml@main
+    with:
+      env: 'qa'
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
-    - name: Deploy to Azure - Dev # Set Variables based on environment
-      uses: ./.github/actions/deploy-azure
-      with:
-        environment: 'dev'
-
-  release_qa:
-    name: Release to QA # Name of the job
-    needs: [release_dev]
-    runs-on: ubuntu-latest # The type of runner that the job will run on
-    environment: # Environment to which the application will be deployed.
-      name: qa
-    steps:
-    - name: Checkout Repository #Checkout the Repository into the agent
-      uses: actions/checkout@v2
-
-    - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
-    - name: Deploy to Azure - QA # Set Variables based on environment
-      uses: ./.github/actions/deploy-azure
-      with:
-        environment: 'qa'
-
-  release_prd:
-    name: Release to PRD # Name of the job
-    needs: [release_qa]
-    runs-on: ubuntu-latest # The type of runner that the job will run on
-    environment: # Environment to which the application will be deployed.
-      name: prd
-    steps:
-    - name: Checkout Repository #Checkout the Repository into the agent
-      uses: actions/checkout@v2
-
-    - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
-    - name: Deploy to Azure - PRD # Set Variables based on environment
-      uses: ./.github/actions/deploy-azure
-      with:
-        environment: 'prd'
+  release-prd:
+    needs: [release-prd]
+    uses: deep-mm/TaskgroupGitHubWorkflow/.github/workflows/reusable-template.yml@main
+    with:
+      env: 'prd'
+    secrets:
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}

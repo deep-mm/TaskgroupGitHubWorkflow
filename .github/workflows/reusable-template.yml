@@ -1,0 +1,35 @@
+#Name of the workflow
+name: Deploy to Azure
+
+#Triggers to run the workflow
+on:
+  workflow_call:
+    inputs:
+      env:
+        required: true
+        type: string
+    secrets:
+      AZURE_CREDENTIALS:
+        required: true
+
+jobs:
+  #Release Job
+  release:
+    name: Release to ${{ inputs.environment }} # Name of the job
+    runs-on: ubuntu-latest # The type of runner that the job will run on
+    environment: # Environment to which the application will be deployed.
+      name: ${{ inputs.environment }}
+    steps:
+      - name: Checkout Repository #Checkout the Repository into the agent
+        uses: actions/checkout@v2
+
+      - name: Login to Azure # Login to Azure with credentials of service principal stored in secrets
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # This action is developed as an IP by the MCS team to use variable groups present in the .github/variables folder. For more details: https://github.com/marketplace/actions/set-variable
+      - name: Deploy to Azure - ${{ inputs.environment }} # Set Variables based on environment
+        uses: ./.github/actions/deploy-azure
+        with:
+          environment: ${{ inputs.environment }}
